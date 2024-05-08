@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Dynamic;
 using System.Globalization;
 using System.IO;
@@ -10,7 +9,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json.Linq;
 
 namespace SpeedrunComSharp
 {
@@ -38,13 +37,7 @@ namespace SpeedrunComSharp
 
         public static dynamic FromString(string value)
         {
-            var serializer = new JavaScriptSerializer()
-            {
-                MaxJsonLength = int.MaxValue
-            };
-            serializer.RegisterConverters(new[] { new DynamicJsonConverter() });
-
-            return serializer.Deserialize<object>(value);
+            return JObject.Parse(value);
         }
 
         public static dynamic FromUri(Uri uri, string userAgent, string accessToken, TimeSpan timeout)
@@ -81,27 +74,6 @@ namespace SpeedrunComSharp
             var response = request.GetResponse();
 
             return FromResponse(response);
-        }
-    }
-
-    public sealed class DynamicJsonConverter : JavaScriptConverter
-    {
-        public override object Deserialize(IDictionary<string, object> dictionary, Type type, JavaScriptSerializer serializer)
-        {
-            if (dictionary == null)
-                throw new ArgumentNullException("dictionary");
-
-            return type == typeof(object) ? new DynamicJsonObject(dictionary) : null;
-        }
-
-        public override IDictionary<string, object> Serialize(object obj, JavaScriptSerializer serializer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override IEnumerable<Type> SupportedTypes
-        {
-            get { return new ReadOnlyCollection<Type>(new List<Type>(new[] { typeof(object) })); }
         }
     }
 

@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup Label="Project Settings">
-    <TargetFramework>net4.6.1</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
 
     <Nullable>disable</Nullable>
   </PropertyGroup>
